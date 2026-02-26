@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Exam Score Predictor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  margin:0;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 30px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns: repeat(2,1fr);
+  gap:14px;
+}
+
+label {
+  font-weight:bold;
+  font-size:14px;
+}
+
+input, select {
+  padding:9px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  width:100%;
+}
+
+button {
+  width:100%;
+  padding:14px;
+  margin-top:18px;
+  border:none;
+  border-radius:10px;
+  background:#667eea;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+}
+
+button:disabled {
+  background:#999;
+  cursor:not-allowed;
+}
+
+#result {
+  margin-top:20px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+}
+
+#loading {
+  text-align:center;
+  margin-top:10px;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2 style="text-align:center">🎓 Student Exam Score Predictor (PyTorch)</h2>
+
+<form id="form">
+<div class="grid">
+
+<div>
+<label>Hours Studied (0–50)</label>
+<input type="number" step="0.1" name="Hours_Studied" min="0" max="50" required>
+</div>
+
+<div>
+<label>Attendance % (0–100)</label>
+<input type="number" step="0.1" name="Attendance" min="0" max="100" required>
+</div>
+
+<div>
+<label>Parental Involvement</label>
+<select name="Parental_Involvement">
+<option value="0">Low</option>
+<option value="1">Medium</option>
+<option value="2">High</option>
+</select>
+</div>
+
+<div>
+<label>Access to Resources</label>
+<select name="Access_to_Resources">
+<option value="0">Low</option>
+<option value="1">Medium</option>
+<option value="2">High</option>
+</select>
+</div>
+
+<div>
+<label>Extracurricular Activities</label>
+<select name="Extracurricular_Activities">
+<option value="0">No</option>
+<option value="1">Yes</option>
+</select>
+</div>
+
+<div>
+<label>Sleep Hours (0–12)</label>
+<input type="number" step="0.1" name="Sleep_Hours" min="0" max="12" required>
+</div>
+
+<div>
+<label>Previous Scores (0–100)</label>
+<input type="number" step="0.1" name="Previous_Scores" min="0" max="100" required>
+</div>
+
+<div>
+<label>Motivation Level</label>
+<select name="Motivation_Level">
+<option value="0">Low</option>
+<option value="1">Medium</option>
+<option value="2">High</option>
+</select>
+</div>
+
+<div>
+<label>Internet Access</label>
+<select name="Internet_Access">
+<option value="0">No</option>
+<option value="1">Yes</option>
+</select>
+</div>
+
+<div>
+<label>Tutoring Sessions (0–10)</label>
+<input type="number" name="Tutoring_Sessions" min="0" max="10" required>
+</div>
+
+<div>
+<label>Family Income</label>
+<select name="Family_Income">
+<option value="0">Low</option>
+<option value="1">Medium</option>
+<option value="2">High</option>
+</select>
+</div>
+
+<div>
+<label>Teacher Quality</label>
+<select name="Teacher_Quality">
+<option value="0">Low</option>
+<option value="1">Medium</option>
+<option value="2">High</option>
+</select>
+</div>
+
+<div>
+<label>School Type</label>
+<select name="School_Type">
+<option value="0">Public</option>
+<option value="1">Private</option>
+</select>
+</div>
+
+<div>
+<label>Peer Influence</label>
+<select name="Peer_Influence">
+<option value="0">Negative</option>
+<option value="1">Neutral</option>
+<option value="2">Positive</option>
+</select>
+</div>
+
+<div>
+<label>Physical Activity (0–10)</label>
+<input type="number" step="0.1" name="Physical_Activity" min="0" max="10" required>
+</div>
+
+<div>
+<label>Learning Disabilities</label>
+<select name="Learning_Disabilities">
+<option value="0">No</option>
+<option value="1">Yes</option>
+</select>
+</div>
+
+<div>
+<label>Parental Education Level</label>
+<select name="Parental_Education_Level">
+<option value="0">High School</option>
+<option value="1">College</option>
+<option value="2">Postgraduate</option>
+</select>
+</div>
+
+<div>
+<label>Distance from Home</label>
+<select name="Distance_from_Home">
+<option value="0">Near</option>
+<option value="1">Moderate</option>
+<option value="2">Far</option>
+</select>
+</div>
+
+<div>
+<label>Gender</label>
+<select name="Gender">
+<option value="0">Male</option>
+<option value="1">Female</option>
+</select>
+</div>
+
+</div>
+
+<button id="submitBtn" type="submit">🚀 Predict Exam Score</button>
+</form>
+
+<div id="loading">⏳ Running AI model...</div>
+<div id="result"></div>
+
+</div>
+
+<script>
+document.getElementById("form").onsubmit = async (e)=>{
+  e.preventDefault();
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  document.getElementById("loading").style.display = "block";
+
+  const formData = new FormData(e.target);
+
+  const res = await fetch("/predict",{
+    method:"POST",
+    body:formData
+  });
+
+  const data = await res.json();
+
+  btn.disabled = false;
+  document.getElementById("loading").style.display = "none";
+
+  if(data.prediction !== undefined){
+    document.getElementById("result").innerHTML =
+      "📊 Predicted Exam Score: " + Number(data.prediction).toFixed(2);
+  } else {
+    document.getElementById("result").innerHTML =
+      "❌ Error: " + data.error;
+  }
+};
+</script>
+
+</body>
+</html>
