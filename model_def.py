@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torchvision
 class StudentPerformanceNN(nn.Module):
     def __init__(self, input_size):
         super().__init__()
@@ -21,4 +22,3 @@ class StudentPerformanceNN(nn.Module):
         
     def forward(self, x):
         return self.network(x)
-
