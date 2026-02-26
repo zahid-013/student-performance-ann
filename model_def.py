@@ -1,3 +1,5 @@
+import torch
+import torch.nn as nn
 class StudentPerformanceNN(nn.Module):
     def __init__(self, input_size):
         super().__init__()

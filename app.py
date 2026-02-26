@@ -3,14 +3,14 @@ import torch
 import numpy as np
 import pickle
 
-from model_def import StudentModel
+from model_def import StudentPerformanceNN 
 
 app = Flask(__name__)
 
 # ---------------- LOAD MODEL ----------------
 device = torch.device("cpu")
 
-model = StudentModel(input_size=19)
+model = StudentPerformanceNN(input_size=19)
 model.load_state_dict(torch.load("model.pth", map_location=device))
 model.eval()
 
@@ -63,7 +63,7 @@ def predict():
             output = model(tensor)
             prediction = output.item()
 
-        return jsonify({"prediction": float(prediction)})
+        return jsonify({"prediction": float(prediction)*100})
 
     except Exception as e:
         return jsonify({"error": str(e)})
