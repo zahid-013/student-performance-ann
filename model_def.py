@@ -21,3 +21,5 @@ class StudentPerformanceNN(nn.Module):
         
     def forward(self, x):
         return self.network(x)
+
+print(torch.__version__)

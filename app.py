@@ -61,9 +61,9 @@ def predict():
 
         with torch.no_grad():
             output = model(tensor)
-            prediction = output.item()
+            prediction = round(output.item(), 2)
 
-        return jsonify({"prediction": float(prediction)*100})
+        return jsonify({"prediction": float(prediction*100)})
 
     except Exception as e:
         return jsonify({"error": str(e)})
